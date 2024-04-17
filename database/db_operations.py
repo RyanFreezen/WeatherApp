@@ -44,7 +44,8 @@ class DBOperations:
                     '''
             cursor.execute(query, (str(start_year), str(end_year)))
             result = cursor.fetchall()
-            data = {row[0]: row[1] for row in result}  # Creating a dictionary from fetched data
+            # Creating a dictionary from fetched data
+            data = {row[0]: row[1] for row in result}  
             # Ensure every month has an entry
             for month in range(1, 13):
                 month_str = str(month).zfill(2)
@@ -62,7 +63,7 @@ class DBOperations:
                     '''
             cursor.execute(query, (str(year), str(month).zfill(2)))
             result = cursor.fetchall()
-            return result  # Return the list of tuples (day, mean_temp)
+            return result  
 
 
     def get_latest_date(self):
@@ -82,7 +83,5 @@ class DBOperations:
             cursor.execute(query)
             return cursor.fetchall()
         
-# Example usage
 if __name__ == "__main__":
     db_ops = DBOperations()
-    

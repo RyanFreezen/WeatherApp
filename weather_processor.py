@@ -28,8 +28,8 @@ class WeatherProcessor:
 
     def download_all_data(self):
         print("Downloading full weather data...")
-        start_date = datetime.date(1840, 1, 1)  # Example start date
-        end_date = datetime.date.today()  # Assumes you want data up to today
+        start_date = datetime.date(1840, 1, 1)  
+        end_date = datetime.date.today()  
         scraper = WeatherScraper(start_date, end_date)
         scraper.run()
         weather_data = scraper.get_weather_data()

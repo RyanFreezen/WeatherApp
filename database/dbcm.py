@@ -36,9 +36,6 @@ class DBCM:
         self.cursor.close()
         self.conn.close()
 
-
-
-# Example usage
 if __name__ == "__main__":
     db_name = "weather_data.db"
     with DBCM(db_name) as cursor:
