@@ -33,40 +33,40 @@ class DBOperations:
         with DBCM(self.db_name) as cursor:
             cursor.execute(query, (date, location_name, max_temp, min_temp, mean_temp))
 
-    def fetch_data(self, start_year=None, end_year=None, month=None):
-        """
-        Fetches weather data from the database. Flexible to fetch either:
-        - Aggregated monthly data over a range of years
-        - Daily data for a specific month and year
-        """
-        if month and start_year and end_year is None:
-            # Fetch daily data for a specific month and year
-            query = f'''
-                    SELECT strftime('%d', date) AS day, mean_temp
-                    FROM weather
-                    WHERE strftime('%Y', date) = ? AND strftime('%m', date) = '{str(month).zfill(2)}'
-                    ORDER BY day;
-                    '''
-            with DBCM(self.db_name) as cursor:
-                cursor.execute(query, (start_year,))
-                return {row[0]: row[1] for row in cursor.fetchall()}
-
-        else:
-            # Fetch aggregated monthly data over a range of years
-            query = f'''
+    def fetch_box_data(self, start_year, end_year):
+        with DBCM(self.db_name) as cursor:
+            query = '''
                     SELECT strftime('%m', date) AS month, AVG(mean_temp) AS avg_temp
                     FROM weather
                     WHERE strftime('%Y', date) BETWEEN ? AND ?
                     GROUP BY strftime('%m', date)
                     ORDER BY month;
                     '''
-            with DBCM(self.db_name) as cursor:
-                cursor.execute(query, (start_year, end_year))
-                return {row[0]: row[1] for row in cursor.fetchall()}
+            cursor.execute(query, (str(start_year), str(end_year)))
+            result = cursor.fetchall()
+            data = {row[0]: row[1] for row in result}  # Creating a dictionary from fetched data
+            # Ensure every month has an entry
+            for month in range(1, 13):
+                month_str = str(month).zfill(2)
+                if month_str not in data:
+                    data[month_str] = None  
+            return data
+        
+    def fetch_line_data(self, year, month):
+        with DBCM(self.db_name) as cursor:
+            query = '''
+                    SELECT strftime('%d', date) AS day, mean_temp
+                    FROM weather
+                    WHERE strftime('%Y', date) = ? AND strftime('%m', date) = ?
+                    ORDER BY date;
+                    '''
+            cursor.execute(query, (str(year), str(month).zfill(2)))
+            result = cursor.fetchall()
+            return result  # Return the list of tuples (day, mean_temp)
+
+
     def get_latest_date(self):
-        
         query = 'SELECT MAX(date) FROM weather;'
-        
         with DBCM(self.db_name) as cursor:
             cursor.execute(query)
             result = cursor.fetchone()
@@ -77,6 +77,11 @@ class DBOperations:
         with DBCM(self.db_name) as cursor:
             cursor.execute(query)
 
+    def fetch_raw_data(self, query):
+        with DBCM(self.db_name) as cursor:
+            cursor.execute(query)
+            return cursor.fetchall()
+        
 # Example usage
 if __name__ == "__main__":
     db_ops = DBOperations()
