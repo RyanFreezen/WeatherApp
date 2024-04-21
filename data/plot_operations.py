@@ -1,14 +1,17 @@
 import sys
 import os
-sys.path.append(os.path.abspath('C:/Term 5/Python/Final Project'))
-from database.db_operations import DBOperations 
+from database.db_operations import DBOperations
 import matplotlib.pyplot as plt
- 
+sys.path.append(os.path.abspath('C:/Term 5/Python/Final Project'))
+
 class PlotOperations:
     def __init__(self, db_name="weather_data.db"):
         self.db_operations = DBOperations(db_name)
 
     def create_yearly_boxplot(self, start_year, end_year):
+        """
+        Function to to create a box plot of mean temps from given start year and end year.
+        """
         data = self.db_operations.fetch_box_data(start_year, end_year)
         if not data:
             print("No data available to plot.")
@@ -16,10 +19,10 @@ class PlotOperations:
 
         months = [str(month).zfill(2) for month in range(1, 13)]
         # Exclude None values for plotting
-        temperatures = [data[month] for month in months if data[month] is not None]  
+        temperatures = [data[month] for month in months if data[month] is not None]
 
         # Check if there's any data to plot
-        if not temperatures:  
+        if not temperatures:
             print("No temperature data available to plot.")
             return
 
@@ -34,6 +37,9 @@ class PlotOperations:
         plt.show()
 
     def create_monthly_line_plot(self, year, month):
+        """
+        Function to to create a line plot of mean temps from given year and month.
+        """
         data = self.db_operations.fetch_line_data(year, month)
         if not data:
             print("No data available to plot.")
@@ -48,7 +54,7 @@ class PlotOperations:
         plt.ylabel('Temperature (°C)')
         plt.title(f'Daily Mean Temperatures for {str(month).zfill(2)}/{year}')
         plt.grid(True)
-        plt.xticks(days, rotation=45)  
+        plt.xticks(days, rotation=45)
         plt.tight_layout()
         plt.show()
 

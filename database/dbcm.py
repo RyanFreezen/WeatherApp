@@ -3,8 +3,7 @@ import sqlite3
 class DBCM:
     def __init__(self, db_name):
         """
-        Initialize the database connection manager with the name of the database.
-        :param db_name: The name of the database file.
+        Initialize the database connection manager.
         """
         self.db_name = db_name
         self.conn = None
@@ -13,8 +12,7 @@ class DBCM:
     def __enter__(self):
         """
         Enter the runtime context related to this object.
-        The with statement will bind this methods return value to the target(s) specified in the as clause of the statement.
-        Here, it will return a cursor object from the database connection.
+        It will return a cursor object from the database connection.
         """
         self.conn = sqlite3.connect(self.db_name)
         self.cursor = self.conn.cursor()
@@ -23,10 +21,8 @@ class DBCM:
     def __exit__(self, exc_type, exc_val, exc_tb):
         """
         Exit the runtime context and close the database connection.
-        If there was any exception, it rolls back any transaction that might have happened. Otherwise, it commits the transactions.
-        :param exc_type: Exception type.
-        :param exc_val: Exception value.
-        :param exc_tb: Exception traceback.
+        If there was any exception, it rolls back any transaction that might have happened. 
+        Otherwise, it commits the transactions.
         """
         if exc_type or exc_val or exc_tb:
             self.conn.rollback()
