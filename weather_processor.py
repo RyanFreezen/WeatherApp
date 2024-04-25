@@ -17,7 +17,7 @@ class WeatherProcessor:
         menu.add("3", "Generate Box Plot", self.generate_box_plot)
         menu.add("4", "Generate Line Plot", self.generate_line_plot)
 
-        menu.add("6", "Exit")
+        menu.add("5", "Exit")
 
         while True:
             choice = menu.show(header="Weather Data Processor", returns="desc")
